@@ -1,4 +1,4 @@
-# � Mod de Visitantes para Pizzerías: El Ecosistema Definitivo (v1.2.0)
+# � Mod de Visitantes para Pizzerías de FNAF (v1.2.0)
 
 [![Forge](https://img.shields.io/badge/Minecraft-1.20.1-red.svg)](https://files.minecraftforge.net/)
 [![Estado del Build](https://img.shields.io/badge/Build-v1.2.0--Optimización--Rendimiento-brightgreen.svg)]()
