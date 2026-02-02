@@ -66,11 +66,3 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 *   **💾 Gestión de Memoria (Garbage Collection):**
     *   Implementada **Memoización** para las búsquedas de `Area AABB`.
     *   Los datos de la entidad ahora se almacenan en caché local para reducir las llamadas I/O a disco durante el *Entity Tick*.
-
----
-
-## [1.1.0] - 2026-01-15
-### 🎉 Release Candidate
-*   Lanzamiento público estable (RTM).
-*   **Event System:** Implementado sistema de "Fiesta de Cumpleaños" con herencia de comportamientos festivos.
-*   **Variantes:** Añadido renderizado de modelos a escala para variantes "Baby Visitor" mediante manipulación de matrices de pila (MatrixStack).
