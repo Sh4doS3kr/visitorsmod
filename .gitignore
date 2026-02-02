@@ -1,0 +1,28 @@
+# Build and IDE files
+build/
+.gradle/
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+run/
+.settings/
+.project
+.classpath
+bin/
+
+# Logs and temporary files
+*.log
+logs/
+temp/
+build_log.txt
+
+# Mod-specific
+.gemini/
+brain/
+mcmodsrepo/
+
+# OS files
+.DS_Store
+Thumbs.db

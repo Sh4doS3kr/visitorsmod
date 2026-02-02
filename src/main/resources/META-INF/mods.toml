@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL=""
+
+[[mods]]
+modId="visitors"
+version="1.0.0"
+displayName="Visitors NPC Mod"
+description='''
+Un mod que añade NPCs visitantes que entran a una zona definida durante el día.
+Los visitantes buscan un hueco para entrar, se mueven aleatoriamente dentro del área,
+y se van al anochecer o después de un tiempo aleatorio.
+'''
+
+[[dependencies.visitors]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.visitors]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"

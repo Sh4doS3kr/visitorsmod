@@ -1,0 +1,11 @@
+{
+  "entity.visitors.visitor": "Visitor",
+  "item.visitors.plate_of_food": "Plate of Food",
+  "commands.visitors.pos1.set": "First position set to %s",
+  "commands.visitors.pos2.set": "Second position set to %s",
+  "commands.visitors.spawn1.set": "First spawn point set to %s",
+  "commands.visitors.spawn2.set": "Second spawn point set to %s",
+  "commands.visitors.area.complete": "Visitors area configured correctly!",
+  "commands.visitors.spawn.complete": "Spawn line configured correctly!",
+  "commands.visitors.error.no_pos": "You must set both positions first!"
+}
