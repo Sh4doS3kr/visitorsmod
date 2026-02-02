@@ -19,7 +19,9 @@ public class FindEntranceGoal extends Goal {
     private final double speed;
     private BlockPos targetPos;
     private int tryCounter;
-    private static final int MAX_TRIES = 20;
+    private int cooldown = 0;
+    private static final int MAX_TRIES = 10;
+    private static final int FIND_COOLDOWN = 60; // 3 segundos entre búsquedas intensas
 
     public FindEntranceGoal(VisitorEntity visitor, double speed) {
         this.visitor = visitor;
@@ -40,6 +42,7 @@ public class FindEntranceGoal extends Goal {
     @Override
     public void start() {
         tryCounter = 0;
+        cooldown = 0;
         findEntrance();
     }
 
@@ -51,13 +54,19 @@ public class FindEntranceGoal extends Goal {
 
     @Override
     public void tick() {
-        if (targetPos == null || visitor.getNavigation().isDone()) {
-            tryCounter++;
-            if (tryCounter >= MAX_TRIES) {
-                // Si no puede encontrar entrada, quedarse quieto un momento
-                tryCounter = 0;
-            }
+        if (cooldown > 0) {
+            cooldown--;
+            return;
+        }
+
+        if (targetPos == null || visitor.getNavigation().isDone() || visitor.getNavigation().isStuck()) {
             findEntrance();
+            // Si después de buscar seguimos sin target, metemos un cooldown largo
+            if (targetPos == null) {
+                cooldown = FIND_COOLDOWN * 2; // 6 segundos de espera si no hay camino
+            } else {
+                cooldown = FIND_COOLDOWN; // 3 segundos si encontramos camino para no recalcular cada tick
+            }
         }
 
         // Check if we entered the area
@@ -96,7 +105,7 @@ public class FindEntranceGoal extends Goal {
         double bestDistance = Double.MAX_VALUE;
 
         // Check all border positions
-        for (int attempt = 0; attempt < 50; attempt++) {
+        for (int attempt = 0; attempt < 5; attempt++) {
             int x, z;
             int side = visitor.getRandom().nextInt(4);
 
