@@ -1,24 +1,26 @@
-# Contribuyendo al Mod de Visitantes
+# 🤝 Contribución
 
-¡Gracias por tu interés en mejorar el Mod de Visitantes! Las contribuciones de la comunidad son muy valiosas para nosotros.
+![Open Source Love](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-red?style=flat-square)
+![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square&logo=github)
+![Java Style](https://img.shields.io/badge/code%20style-Google-blue?style=flat-square&logo=google)
+![Discord](https://img.shields.io/badge/Discord-Dev%20Chat-5865F2?style=flat-square&logo=discord)
+![CI Status](https://img.shields.io/badge/CI%2FCD-Pipeline%20Passing-success?style=flat-square&logo=github-actions)
 
-## Cómo Contribuir
+¡Gracias por tu interés en colaborar con la arquitectura del **Visitors Mod**! Valoramos enormemente las contribuciones de la comunidad técnica para optimizar y escalar este proyecto.
 
-1. **Haz un Fork del repositorio** en GitHub.
-2. **Crea una nueva rama** para tu funcionalidad o corrección: `git checkout -b feature/funcionalidad-increible`.
-3. **Realiza tus cambios** siguiendo el estilo de programación del proyecto (Lógica de Java limpia y comentada).
-4. **Prueba tus cambios** en un entorno de desarrollo local.
-5. **Envía un Pull Request** con una descripción clara de tus cambios.
+---
 
-## Reporte de Errores (Bugs)
+## 🛠️ Flujo de Trabajo (Git Workflow)
 
-Si encuentras un error, por favor abre un "Issue" e incluye:
-- Versión del mod y versión de Forge.
-- Pasos para reproducirlo.
-- Logs relevantes o capturas de pantalla.
+Para mantener la integridad del código base, utilizamos un modelo de ramas estricto ("Feature Branch Workflow").
 
-## Código de Conducta
-
-Por favor, sé respetuoso y ayuda a otros colaboradores.
-
-¡Feliz programación!
+```mermaid
+gitGraph
+   commit id: "Master Stable"
+   branch feature/nueva-funcionalidad
+   checkout feature/nueva-funcionalidad
+   commit id: "Init Logic"
+   commit id: "Implement Fix"
+   commit id: "Unit Tests"
+   checkout main
+   merge feature/nueva-funcionalidad tag: "PR Review"

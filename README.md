@@ -4,7 +4,7 @@
 [![Estado del Build](https://img.shields.io/badge/Build-v1.2.0--Optimización--Rendimiento-brightgreen.svg)]()
 [![Licencia](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-El **Mod de Visitantes** es un sistema sofisticado de NPCs diseñado para transformar construcciones estáticas de Minecraft en entornos de negocio dinámicos y vivos. Desarrollado específicamente para la **Simulación de Pizzerías**, incluye una IA de alto rendimiento, un sistema de reputación basado en méritos y comportamientos sociales complejos.
+El **Mod de Visitantes** es un sistema sofisticado de NPCs diseñado para transformar construcciones estáticas de Minecraft en entornos de negocio dinámicos y vivos. Desarrollado específicamente para la **Pizzeria de FNAF**, incluye una IA de alto rendimiento, un sistema de reputación basado en méritos y comportamientos sociales complejos.
 
 ---
 
