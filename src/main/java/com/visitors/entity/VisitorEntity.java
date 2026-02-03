@@ -74,7 +74,7 @@ public class VisitorEntity extends PathfinderMob {
     private int hungerTimer = 0;
     private int deliveryTimer = 0;
     private int lowLightTicks = 0;
-    private int satisfactionScore = 3;
+    private int satisfactionScore = 4; // Subida base de 3 a 4
 
     private static final int MIN_STAY_TIME = 60 * 20;
     private static final int MAX_STAY_TIME = 300 * 20;
@@ -189,7 +189,7 @@ public class VisitorEntity extends PathfinderMob {
                 int light = this.level().getMaxLocalRawBrightness(this.blockPosition());
                 if (light < 7) {
                     lowLightTicks += 100;
-                    if (lowLightTicks > 600) {
+                    if (lowLightTicks > 1200) { // Duplicado tiempo antes de penalizar (de 600 a 1200)
                         satisfactionScore = Math.max(0, satisfactionScore - 1);
                         lowLightTicks = 0;
                     }
@@ -200,7 +200,7 @@ public class VisitorEntity extends PathfinderMob {
                 AABB nearby = this.getBoundingBox().inflate(3.0D);
                 java.util.List<VisitorEntity> othersNearby = this.level().getEntitiesOfClass(VisitorEntity.class,
                         nearby);
-                if (othersNearby.size() > 5) {
+                if (othersNearby.size() > 8) { // Subido límite de aglomeración de 5 a 8
                     satisfactionScore = Math.max(0, satisfactionScore - 1);
                 }
 
@@ -215,11 +215,12 @@ public class VisitorEntity extends PathfinderMob {
                                 cachedAreaAABB);
                         double spacePerPerson = (double) areaSize / Math.max(1, allInArea.size());
 
-                        if (spacePerPerson < 8.0) {
-                            if (this.random.nextFloat() < 0.2f)
+                        if (spacePerPerson < 5.0) { // Reducido espacio mínimo de 8 a 5
+                            if (this.random.nextFloat() < 0.1f) // Probabilidad de bajar reducida a la mitad
                                 satisfactionScore = Math.max(0, satisfactionScore - 1);
-                        } else if (spacePerPerson > 40.0) {
-                            if (this.random.nextFloat() < 0.1f)
+                        } else if (spacePerPerson > 20.0) { // Bajado umbral de espacio extra de 40 a 20 (más fácil
+                                                            // ganar puntos)
+                            if (this.random.nextFloat() < 0.2f) // Probabilidad de subir doblada
                                 satisfactionScore = Math.min(5, satisfactionScore + 1);
                         }
                     }

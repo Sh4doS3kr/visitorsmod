@@ -9,6 +9,13 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.4.0] - 2026-02-03
+### Añadido
+- Balance de Satisfacción: Los NPCs ahora son menos estrictos y las puntuaciones son más justas.
+- Mejora de Base: Puntuación inicial subida a 4 estrellas.
+- Suavizado de penalizaciones: Mayor tolerancia a la oscuridad, aglomeraciones y falta de espacio.
+- Mayor facilidad de mejora: Es más sencillo subir la puntuación si el local es espacioso.
+
 ## [1.3.2] - 2026-02-03
 ### Corregido
 - Fix Modo Edición: Corregido el error de "doble disparo" que causaba que las sillas se eliminaran inmediatamente después de ser añadidas.
