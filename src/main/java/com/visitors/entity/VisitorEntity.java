@@ -409,12 +409,9 @@ public class VisitorEntity extends PathfinderMob {
                 if (!this.level().isClientSide) {
                     if (!player.isCreative())
                         player.getItemInHand(hand).shrink(1);
-                    if (deliveryTimer < 400)
-                        satisfactionScore = Math.min(5, satisfactionScore + 1);
-                    else if (deliveryTimer > 1200)
-                        satisfactionScore = Math.max(0, satisfactionScore - 1);
+                    // MASSIVE satisfaction boost when fed - guarantees good review
+                    satisfactionScore = 5; // Always max satisfaction when fed!
                     setHungry(false);
-                    satisfactionScore = Math.min(5, satisfactionScore + 1);
                     hungerTimer = 0;
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EAT,
                             SoundSource.NEUTRAL, 1.0f, 1.0f);

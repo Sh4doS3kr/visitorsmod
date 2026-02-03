@@ -193,30 +193,31 @@ public class VisitorSpawnManager {
             return;
         }
 
-        // Pick a random VALID area for this visitor
-        List<VisitorsSavedData.Area> validAreas = new ArrayList<>();
+        // Pick the area with FEWEST visitors (balanced distribution)
         List<VisitorsSavedData.Area> allAreas = data.getAreas();
+        int bestAreaIndex = -1;
+        int minVisitors = Integer.MAX_VALUE;
+
         for (int i = 0; i < allAreas.size(); i++) {
             if (allAreas.get(i).isValid()) {
-                validAreas.add(allAreas.get(i));
+                // Count visitors in this area
+                int count = 0;
+                for (VisitorEntity v : activeVisitors) {
+                    if (v.getTargetArea() == i) {
+                        count++;
+                    }
+                }
+                if (count < minVisitors) {
+                    minVisitors = count;
+                    bestAreaIndex = i;
+                }
             }
         }
 
-        if (validAreas.isEmpty())
+        if (bestAreaIndex == -1)
             return;
 
-        // Simple retry strategy to find a valid index
-        int areaIndex = -1;
-        for (int i = 0; i < 10; i++) {
-            int tryIndex = random.nextInt(allAreas.size());
-            if (allAreas.get(tryIndex).isValid()) {
-                areaIndex = tryIndex;
-                break;
-            }
-        }
-
-        if (areaIndex == -1)
-            return;
+        int areaIndex = bestAreaIndex;
 
         // Create and spawn the visitor
         VisitorEntity visitor = ModEntities.VISITOR.get().create(level);
