@@ -46,6 +46,9 @@ public class VisitorsMod {
 
     private void onAttributeCreate(EntityAttributeCreationEvent event) {
         event.put(ModEntities.VISITOR.get(), VisitorEntity.createAttributes().build());
+        event.put(ModEntities.CONTRACTOR.get(), com.visitors.entity.ContractorEntity.createAttributes().build());
+        event.put(ModEntities.INSPECTOR.get(), com.visitors.entity.InspectorEntity.createAttributes().build());
+        event.put(ModEntities.CLEANER.get(), com.visitors.entity.CleanerEntity.createAttributes().build());
     }
 
     @SubscribeEvent

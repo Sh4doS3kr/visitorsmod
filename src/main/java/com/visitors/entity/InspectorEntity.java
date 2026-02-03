@@ -10,6 +10,9 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,6 +31,12 @@ public class InspectorEntity extends PathfinderMob {
 
     public InspectorEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override

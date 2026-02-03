@@ -34,6 +34,10 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - Registro seguro de renderers de entidades en hilos de cliente.
 - Sincronización robusta de datos de gestión local-servidor vía red.
 
+#### Hotfix (Crash al iniciar)
+- **Atributos de Entidad:** Corregido un `NullPointerException` crítico que ocurría al intentar spawnear al Contratista o Inspector debido a la falta de registro de atributos en el bus de eventos de Forge.
+- **Estabilidad del Servidor:** Asegurado que todos los nuevos NPCs (Contractor, Inspector, Cleaner) tengan sus atributos base correctamente inicializados.
+
 ## [1.4.1] - 2026-02-03
 ### Corregido
 - Fix Sentado Definitivo: Aumentado el radio de detección de sillas y forzado el teletransporte al centro del bloque para asegurar que los NPCs se sienten siempre.
