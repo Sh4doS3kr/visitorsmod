@@ -11,6 +11,9 @@ public class RatingHUDOverlay {
     private static int currentCount = 0;
     private static float currentTps = 20.0f;
     private static float currentMspt = 0.0f;
+    private static long nextInspectionTicks = 0;
+    private static long nextContractorTicks = 0;
+    private static boolean isClosed = false;
 
     public static void setRating(float rating, int count) {
         currentRating = rating;
@@ -20,6 +23,12 @@ public class RatingHUDOverlay {
     public static void setPerformance(float tps, float mspt) {
         currentTps = tps;
         currentMspt = mspt;
+    }
+
+    public static void setManagementData(long nextInsp, long nextCont, boolean closed) {
+        nextInspectionTicks = nextInsp;
+        nextContractorTicks = nextCont;
+        isClosed = closed;
     }
 
     public static final IGuiOverlay HUD_RATING = (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
@@ -46,26 +55,17 @@ public class RatingHUDOverlay {
         guiGraphics.drawString(mc.font, String.format("%.1f/5.0", currentRating), x + 65, starY,
                 0xEECB00);
 
-        // --- PERFORMANCE MONITOR ---
-        int perfY = starY + 15;
+        // --- MANAGEMENT STATUS ---
+        int mgmtY = starY + 15;
 
-        // TPS Color
-        String tpsColor = "§a";
-        if (currentTps < 12)
-            tpsColor = "§c";
-        else if (currentTps < 18)
-            tpsColor = "§e";
+        if (isClosed) {
+            guiGraphics.drawString(mc.font, "§4§lCERRADO POR SANIDAD", x - 20, mgmtY, 0xFFFFFF);
+        } else {
+            String inspText = String.format("§dInspección: §f%.1f d", nextInspectionTicks / 24000.0f);
+            String contText = String.format("§6Contratista: §f%.1f d", nextContractorTicks / 24000.0f);
 
-        // MSPT Color
-        String msptColor = "§a";
-        if (currentMspt > 50)
-            msptColor = "§c";
-        else if (currentMspt > 35)
-            msptColor = "§e";
-
-        String perfText = String.format("%sTPS: %.1f§f  %sMSPT: %.1f§f",
-                tpsColor, currentTps, msptColor, currentMspt);
-
-        guiGraphics.drawString(mc.font, perfText, x - 10, perfY, 0xFFFFFF, true);
+            guiGraphics.drawString(mc.font, inspText, x - 10, mgmtY, 0xFFFFFF);
+            guiGraphics.drawString(mc.font, contText, x - 10, mgmtY + 10, 0xFFFFFF);
+        }
     };
 }

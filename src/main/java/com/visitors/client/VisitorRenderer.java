@@ -13,7 +13,9 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class VisitorRenderer extends MobRenderer<VisitorEntity, PlayerModel<VisitorEntity>> {
 
-        private static final ResourceLocation TEXTURE = new ResourceLocation(VisitorsMod.MOD_ID,
+        private final ResourceLocation customTexture;
+
+        private static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation(VisitorsMod.MOD_ID,
                         "textures/entity/visitor_custom.png");
 
         private static final ResourceLocation CHICKEN_LEG_ICON = new ResourceLocation(VisitorsMod.MOD_ID,
@@ -22,12 +24,21 @@ public class VisitorRenderer extends MobRenderer<VisitorEntity, PlayerModel<Visi
                         "textures/gui/alert_icon.png");
 
         public VisitorRenderer(EntityRendererProvider.Context context) {
+                this(context, DEFAULT_TEXTURE);
+        }
+
+        public VisitorRenderer(EntityRendererProvider.Context context, ResourceLocation texture) {
                 super(context, new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false), 0.5f);
+                this.customTexture = texture;
+        }
+
+        public VisitorRenderer(EntityRendererProvider.Context context, String texturePath) {
+                this(context, new ResourceLocation(VisitorsMod.MOD_ID, texturePath));
         }
 
         @Override
         public ResourceLocation getTextureLocation(VisitorEntity entity) {
-                return TEXTURE;
+                return customTexture;
         }
 
         @Override

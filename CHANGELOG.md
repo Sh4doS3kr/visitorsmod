@@ -20,6 +20,20 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - Reseteo de Estrellas: Añadido el comando `/visitors resetstars` para borrar todas las valoraciones y empezar de cero.
 - Persistencia: El ajuste de altura y las valoraciones se gestionan de forma persistente.
 
+## [1.6.0] - 2026-02-03
+#### Añadido
+- **Sistema de Basura:** Los visitantes ahora tiran basura ocasionalmente. Puede ser recogida con 10 clicks (con feedback visual y sonoro).
+- **Inspección de Sanidad:** Cada 10 días aparece un Inspector. Si el local está sucio o mal iluminado, emitirá un informe negativo y cerrará el local.
+- **Contratista y Limpiadores:** Cada 3 días aparece un contratista que permite contratar limpiadores automáticos por 32 FazBucks al día.
+- **Rework de Satisfacción:** Nuevos factores influyen en las estrellas: limpieza (basura cercana), altura del techo y volumen del área.
+- **HUD mejorado:** Se han sustituido los monitores de performance por cronómetros para la próxima inspección y la llegada del contratista.
+- **Comando Debug:** /visitors spawntrash para pruebas.
+
+#### Corregido
+- Compatibilidad con Java 8 forzada en todo el código.
+- Registro seguro de renderers de entidades en hilos de cliente.
+- Sincronización robusta de datos de gestión local-servidor vía red.
+
 ## [1.4.1] - 2026-02-03
 ### Corregido
 - Fix Sentado Definitivo: Aumentado el radio de detección de sillas y forzado el teletransporte al centro del bloque para asegurar que los NPCs se sienten siempre.

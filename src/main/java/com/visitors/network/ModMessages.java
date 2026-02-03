@@ -38,6 +38,12 @@ public class ModMessages {
                 .encoder(S2CPerformancePacket::toBytes)
                 .consumerMainThread(S2CPerformancePacket::handle)
                 .add();
+
+        INSTANCE.messageBuilder(S2CManagementSyncPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(S2CManagementSyncPacket::new)
+                .encoder(S2CManagementSyncPacket::toBytes)
+                .consumerMainThread(S2CManagementSyncPacket::handle)
+                .add();
     }
 
     public static <MSG> void sendToServer(MSG message) {

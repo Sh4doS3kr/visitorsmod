@@ -18,4 +18,28 @@ public class ModEntities {
                                         .sized(0.6F, 1.95F) // Tamaño estándar adulto
                                         .clientTrackingRange(10)
                                         .build(new ResourceLocation(VisitorsMod.MOD_ID, "visitor").toString()));
+
+        public static final RegistryObject<EntityType<TrashEntity>> TRASH = ENTITIES.register("trash",
+                        () -> EntityType.Builder.of(TrashEntity::new, net.minecraft.world.entity.MobCategory.MISC)
+                                        .sized(0.5F, 0.2F)
+                                        .clientTrackingRange(10)
+                                        .build(new ResourceLocation(VisitorsMod.MOD_ID, "trash").toString()));
+
+        public static final RegistryObject<EntityType<ContractorEntity>> CONTRACTOR = ENTITIES.register("contractor",
+                        () -> EntityType.Builder.of(ContractorEntity::new, net.minecraft.world.entity.MobCategory.MISC)
+                                        .sized(0.6F, 1.95F)
+                                        .clientTrackingRange(10)
+                                        .build(new ResourceLocation(VisitorsMod.MOD_ID, "contractor").toString()));
+
+        public static final RegistryObject<EntityType<InspectorEntity>> INSPECTOR = ENTITIES.register("inspector",
+                        () -> EntityType.Builder.of(InspectorEntity::new, net.minecraft.world.entity.MobCategory.MISC)
+                                        .sized(0.6F, 1.95F)
+                                        .clientTrackingRange(10)
+                                        .build(new ResourceLocation(VisitorsMod.MOD_ID, "inspector").toString()));
+
+        public static final RegistryObject<EntityType<CleanerEntity>> CLEANER = ENTITIES.register("cleaner",
+                        () -> EntityType.Builder.of(CleanerEntity::new, net.minecraft.world.entity.MobCategory.MISC)
+                                        .sized(0.6F, 1.95F)
+                                        .clientTrackingRange(10)
+                                        .build(new ResourceLocation(VisitorsMod.MOD_ID, "cleaner").toString()));
 }

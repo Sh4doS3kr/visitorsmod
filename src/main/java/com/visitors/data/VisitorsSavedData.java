@@ -52,6 +52,11 @@ public class VisitorsSavedData extends SavedData {
     private float reputationBonus = 0.0f; // Bonus stackable for heroic actions
     private float chairYOffset = -0.55f; // New Sitting Height Offset
 
+    // Management Events Timers (in ticks)
+    private long lastInspectionTime = 0;
+    private long lastContractorTime = 0;
+    private boolean closedBySanity = false;
+
     public VisitorsSavedData() {
         // Initialize at least one area
         areas.add(new Area());
@@ -153,6 +158,9 @@ public class VisitorsSavedData extends SavedData {
         if (tag.contains("ChairYOffset")) {
             chairYOffset = tag.getFloat("ChairYOffset");
         }
+        lastInspectionTime = tag.getLong("LastInspectionTime");
+        lastContractorTime = tag.getLong("LastContractorTime");
+        closedBySanity = tag.getBoolean("ClosedBySanity");
 
         chairs.clear();
         if (tag.contains("Chairs")) {
@@ -239,6 +247,9 @@ public class VisitorsSavedData extends SavedData {
         tag.putInt("RatingCount", ratingCount);
         tag.putFloat("ReputationBonus", reputationBonus);
         tag.putFloat("ChairYOffset", chairYOffset);
+        tag.putLong("LastInspectionTime", lastInspectionTime);
+        tag.putLong("LastContractorTime", lastContractorTime);
+        tag.putBoolean("ClosedBySanity", closedBySanity);
 
         net.minecraft.nbt.ListTag chairsTag = new net.minecraft.nbt.ListTag();
         for (BlockPos p : chairs) {
@@ -536,6 +547,33 @@ public class VisitorsSavedData extends SavedData {
 
     public void setChairYOffset(float offset) {
         this.chairYOffset = offset;
+        setDirty();
+    }
+
+    public long getLastInspectionTime() {
+        return lastInspectionTime;
+    }
+
+    public void setLastInspectionTime(long time) {
+        this.lastInspectionTime = time;
+        setDirty();
+    }
+
+    public long getLastContractorTime() {
+        return lastContractorTime;
+    }
+
+    public void setLastContractorTime(long time) {
+        this.lastContractorTime = time;
+        setDirty();
+    }
+
+    public boolean isClosedBySanity() {
+        return closedBySanity;
+    }
+
+    public void setClosedBySanity(boolean closed) {
+        this.closedBySanity = closed;
         setDirty();
     }
 }

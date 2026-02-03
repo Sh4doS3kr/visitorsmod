@@ -38,6 +38,17 @@ public class ModCommands {
                                             "§c§l[Reset] §fTodas las estrellas y valoraciones han sido reseteadas."),
                                             true);
                             return 1;
+                        }))
+                .then(Commands.literal("spawntrash")
+                        .executes(context -> {
+                            ServerPlayer player = context.getSource().getPlayerOrException();
+                            ServerLevel level = player.serverLevel();
+                            com.visitors.entity.TrashEntity trash = new com.visitors.entity.TrashEntity(
+                                    com.visitors.entity.ModEntities.TRASH.get(), level);
+                            trash.setPos(player.getX(), player.getY(), player.getZ());
+                            level.addFreshEntity(trash);
+                            player.sendSystemMessage(Component.literal("§e¡Basura spawneada!"));
+                            return 1;
                         })));
 
         // /visitorspos1 - Set first corner of visitor area

@@ -2,6 +2,7 @@ package com.visitors.entity;
 
 import com.visitors.VisitorsMod;
 import com.visitors.data.VisitorsSavedData;
+import com.visitors.entity.TrashEntity;
 import com.visitors.entity.ai.*;
 import com.visitors.item.ModItems;
 import com.visitors.data.ReviewTextPool;
@@ -73,6 +74,7 @@ public class VisitorEntity extends PathfinderMob {
 
     private int hungerTimer = 0;
     private int deliveryTimer = 0;
+    private int trashCooldown = 0;
     private int lowLightTicks = 0;
     private int satisfactionScore = 4; // Subida base de 3 a 4
 
@@ -197,6 +199,21 @@ public class VisitorEntity extends PathfinderMob {
                     lowLightTicks = 0;
                 }
 
+                // Littering logic
+                if (trashCooldown > 0) {
+                    trashCooldown -= 100;
+                } else if (getVisitorState() == VisitorState.WANDERING && this.random.nextFloat() < 0.05f) {
+                    // 5% chance every 5 seconds if wandering
+                    if (this.level() instanceof ServerLevel) {
+                        ServerLevel serverLevel = (ServerLevel) this.level();
+                        TrashEntity trash = new TrashEntity(ModEntities.TRASH.get(), serverLevel);
+                        trash.setPos(this.getX(), this.getY(), this.getZ());
+                        if (serverLevel.addFreshEntity(trash)) {
+                            trashCooldown = 12000; // 10 minutes approx between littering
+                        }
+                    }
+                }
+
                 AABB nearby = this.getBoundingBox().inflate(3.0D);
                 java.util.List<VisitorEntity> othersNearby = this.level().getEntitiesOfClass(VisitorEntity.class,
                         nearby);
@@ -211,16 +228,35 @@ public class VisitorEntity extends PathfinderMob {
                         long areaSize = currentArea.getPlaneArea();
                         if (cachedAreaAABB == null)
                             updateAreaBounds();
+
+                        // Area Factors (Strict & Just)
                         java.util.List<VisitorEntity> allInArea = this.level().getEntitiesOfClass(VisitorEntity.class,
                                 cachedAreaAABB);
                         double spacePerPerson = (double) areaSize / Math.max(1, allInArea.size());
 
-                        if (spacePerPerson < 5.0) { // Reducido espacio mínimo de 8 a 5
-                            if (this.random.nextFloat() < 0.1f) // Probabilidad de bajar reducida a la mitad
+                        // Height Factor
+                        double height = Math.abs(currentArea.pos1.getY() - currentArea.pos2.getY()) + 1;
+                        if (height < 3.0) {
+                            satisfactionScore = Math.max(0, satisfactionScore - 1); // Penalize low ceiling
+                        } else if (height > 5.0) {
+                            if (this.random.nextFloat() < 0.05f)
+                                satisfactionScore = Math.min(5, satisfactionScore + 1);
+                        }
+
+                        // Cleanliness Factor (Trash nearby)
+                        AABB trashCheck = this.getBoundingBox().inflate(5.0D);
+                        java.util.List<TrashEntity> trashNearby = this.level().getEntitiesOfClass(TrashEntity.class,
+                                trashCheck);
+                        if (!trashNearby.isEmpty()) {
+                            satisfactionScore = Math.max(0, satisfactionScore - 2); // Heavy penalty for trash
+                        }
+
+                        // Space Factor
+                        if (spacePerPerson < 5.0) {
+                            if (this.random.nextFloat() < 0.15f)
                                 satisfactionScore = Math.max(0, satisfactionScore - 1);
-                        } else if (spacePerPerson > 20.0) { // Bajado umbral de espacio extra de 40 a 20 (más fácil
-                                                            // ganar puntos)
-                            if (this.random.nextFloat() < 0.2f) // Probabilidad de subir doblada
+                        } else if (spacePerPerson > 20.0) {
+                            if (this.random.nextFloat() < 0.1f)
                                 satisfactionScore = Math.min(5, satisfactionScore + 1);
                         }
                     }
