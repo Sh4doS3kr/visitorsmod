@@ -9,6 +9,11 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.3.0] - 2026-02-03
+### Añadido
+- Mecánica Anti-Killer: Pulsa click derecho 3 veces para derrotar Killers y ganar 10 estrellas + reputación.
+- Mensajes en action bar para contador de clicks.
+
 ---
 
 ## [1.2.0] - 2026-02-02

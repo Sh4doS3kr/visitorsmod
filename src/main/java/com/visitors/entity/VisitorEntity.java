@@ -82,6 +82,7 @@ public class VisitorEntity extends PathfinderMob {
     private int ticksInArea;
     private boolean shouldLeave = false;
     private boolean hasGivenReward = false;
+    private int killerClicks = 0;
 
     private BlockPos areaMin;
     private BlockPos areaMax;
@@ -280,6 +281,41 @@ public class VisitorEntity extends PathfinderMob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!this.level().isClientSide && isKiller()) {
+            killerClicks++;
+            int remaining = 3 - killerClicks;
+
+            if (remaining > 0) {
+                player.displayClientMessage(
+                        Component.literal(
+                                "§c§l¡KILLER DETECTADO! §fTe quedan §e" + remaining + " §fclics para derrotarlo."),
+                        true);
+                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR,
+                        SoundSource.NEUTRAL, 1.0f, 1.5f);
+            } else {
+                player.displayClientMessage(
+                        Component.literal("§a§l¡KILLER DERROTADO! §fHas ganado §e10 Estrellas §fy §6Reputación."),
+                        true);
+                if (this.level() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.level();
+                    VisitorsSavedData data = VisitorsSavedData.get(serverLevel);
+
+                    // Add 10 stars (ratingSum += 10, ratingCount++)
+                    data.addReview(10, serverLevel);
+                    // Add massive reputation bonus
+                    data.addReputationBonus(0.5f);
+
+                    // Reward sound and particles
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.TOTEM_OF_UNDYING, this.getX(),
+                            this.getY() + 1, this.getZ(), 50, 0.5, 0.5, 0.5, 0.1);
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_LEVELUP,
+                            SoundSource.NEUTRAL, 1.0f, 1.0f);
+                }
+                this.discard();
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         if (isEscaping() && !hasGivenReward) {
             giveRewardAndRemove(player);
             return InteractionResult.SUCCESS;

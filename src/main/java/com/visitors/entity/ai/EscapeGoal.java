@@ -60,16 +60,23 @@ public class EscapeGoal extends Goal {
         }
     }
 
+    private int escapeCooldown = 0;
+    private static final int ESCAPE_CALC_COOLDOWN = 40; // 2 segundos entre cálculos pesados
+
     @Override
     public void tick() {
         ticksEscaping++;
 
+        if (escapeCooldown > 0) {
+            escapeCooldown--;
+        }
+
         // Forced progress check: if not moved in 2 seconds, find new direction
-        if (ticksEscaping % 10 == 0) {
+        if (ticksEscaping % 20 == 0) { // Check every second instead of 0.5s
             double movedDist = Math
                     .sqrt(Math.pow(visitor.getX() - lastPosX, 2) + Math.pow(visitor.getZ() - lastPosZ, 2));
-            if (movedDist < 0.1) {
-                stuckTicks += 10;
+            if (movedDist < 0.2) {
+                stuckTicks += 20;
             } else {
                 stuckTicks = 0;
             }
@@ -77,18 +84,19 @@ public class EscapeGoal extends Goal {
             lastPosZ = visitor.getZ();
         }
 
-        if (stuckTicks > 40 || escapeTarget == null || visitor.getNavigation().isDone()
-                || visitor.getNavigation().isStuck()) {
+        if (escapeCooldown <= 0 && (stuckTicks > 40 || escapeTarget == null || visitor.getNavigation().isDone()
+                || visitor.getNavigation().isStuck())) {
             stuckTicks = 0;
             findEscapeDirection();
+            escapeCooldown = ESCAPE_CALC_COOLDOWN;
         }
 
         // Check if we're far enough from escape target to find next one
-        if (escapeTarget != null) {
+        if (escapeCooldown <= 0 && escapeTarget != null) {
             double distToTarget = visitor.distanceToSqr(escapeTarget.getX(), escapeTarget.getY(), escapeTarget.getZ());
             if (distToTarget < 9.0) { // Within 3 blocks
-                // Find new escape target further away
                 findEscapeDirection();
+                escapeCooldown = ESCAPE_CALC_COOLDOWN;
             }
         }
 
