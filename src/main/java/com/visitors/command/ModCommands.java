@@ -1,6 +1,7 @@
 package com.visitors.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.visitors.data.VisitorsSavedData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -455,6 +456,28 @@ public class ModCommands {
                                 player.sendSystemMessage(Component.literal(
                                         "§7Haz click derecho en un bloque para agregarlo o quitarlo como silla."));
                             }
+                            return 1;
+                        }))
+                .then(Commands.literal("offset")
+                        .then(Commands.argument("value", FloatArgumentType.floatArg())
+                                .executes(context -> {
+                                    float value = FloatArgumentType.getFloat(context, "value");
+                                    ServerLevel level = context.getSource().getLevel();
+                                    VisitorsSavedData.get(level).setChairYOffset(value);
+                                    context.getSource().sendSuccess(
+                                            () -> Component
+                                                    .literal("§a§l[Config] §fAltura de sillas ajustada a: §e" + value),
+                                            true);
+                                    return 1;
+                                })))
+                .then(Commands.literal("resetstars")
+                        .executes(context -> {
+                            ServerLevel level = context.getSource().getLevel();
+                            VisitorsSavedData.get(level).resetReviews(level);
+                            context.getSource()
+                                    .sendSuccess(() -> Component.literal(
+                                            "§c§l[Reset] §fTodas las estrellas y valoraciones han sido reseteadas."),
+                                            true);
                             return 1;
                         })));
     }

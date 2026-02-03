@@ -9,6 +9,12 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.5.0] - 2026-02-03
+### Añadido
+- Altura de Sentado Configurable: Añadido el comando `/visitorschair offset <valor>` para ajustar la altura de los NPCs al sentarse.
+- Reseteo de Estrellas: Añadido el comando `/visitorschair resetstars` para borrar todas las valoraciones y empezar de cero.
+- Persistencia: El ajuste de altura y las valoraciones se gestionan de forma persistente.
+
 ## [1.4.1] - 2026-02-03
 ### Corregido
 - Fix Sentado Definitivo: Aumentado el radio de detección de sillas y forzado el teletransporte al centro del bloque para asegurar que los NPCs se sienten siempre.

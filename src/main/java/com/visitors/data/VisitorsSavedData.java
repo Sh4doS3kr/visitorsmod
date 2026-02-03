@@ -50,6 +50,7 @@ public class VisitorsSavedData extends SavedData {
     private float ratingSum = 15.0f; // Start with 3.0 avg * 5
     private int ratingCount = 5;
     private float reputationBonus = 0.0f; // Bonus stackable for heroic actions
+    private float chairYOffset = -0.55f; // New Sitting Height Offset
 
     public VisitorsSavedData() {
         // Initialize at least one area
@@ -149,6 +150,9 @@ public class VisitorsSavedData extends SavedData {
         if (tag.contains("ReputationBonus")) {
             reputationBonus = tag.getFloat("ReputationBonus");
         }
+        if (tag.contains("ChairYOffset")) {
+            chairYOffset = tag.getFloat("ChairYOffset");
+        }
 
         chairs.clear();
         if (tag.contains("Chairs")) {
@@ -234,6 +238,7 @@ public class VisitorsSavedData extends SavedData {
         tag.putFloat("RatingSum", ratingSum);
         tag.putInt("RatingCount", ratingCount);
         tag.putFloat("ReputationBonus", reputationBonus);
+        tag.putFloat("ChairYOffset", chairYOffset);
 
         net.minecraft.nbt.ListTag chairsTag = new net.minecraft.nbt.ListTag();
         for (BlockPos p : chairs) {
@@ -444,6 +449,14 @@ public class VisitorsSavedData extends SavedData {
         return ratingCount;
     }
 
+    public void resetReviews(ServerLevel level) {
+        this.ratingSum = 0;
+        this.ratingCount = 0;
+        setDirty();
+        updateScoreboard(level);
+        ModMessages.sendToAllClients(new S2CRatingSyncPacket(0, 0));
+    }
+
     public void updateScoreboard(ServerLevel level) {
         Scoreboard scoreboard = level.getScoreboard();
         Objective obj = scoreboard.getObjective("pizzeria_rating");
@@ -510,5 +523,14 @@ public class VisitorsSavedData extends SavedData {
                 return chair;
         }
         return null;
+    }
+
+    public float getChairYOffset() {
+        return chairYOffset;
+    }
+
+    public void setChairYOffset(float offset) {
+        this.chairYOffset = offset;
+        setDirty();
     }
 }

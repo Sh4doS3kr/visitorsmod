@@ -83,7 +83,7 @@ public class SitInChairGoal extends Goal {
                     // Force teleport to center to avoid being stuck at block edges
                     visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
 
-                    double offsetY = -0.55;
+                    double offsetY = VisitorsSavedData.get(serverLevel).getChairYOffset();
 
                     // Check if block below is a table/high block (detecting by height in image)
                     // If the user put chairs on tables, Y might be higher. we trust chairPos.
