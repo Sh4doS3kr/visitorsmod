@@ -12,7 +12,7 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 ## [1.5.0] - 2026-02-03
 ### Añadido
 - Altura de Sentado Configurable: Añadido el comando `/visitorschair offset <valor>` para ajustar la altura de los NPCs al sentarse.
-- Reseteo de Estrellas: Añadido el comando `/visitorschair resetstars` para borrar todas las valoraciones y empezar de cero.
+- Reseteo de Estrellas: Añadido el comando `/visitors resetstars` para borrar todas las valoraciones y empezar de cero.
 - Persistencia: El ajuste de altura y las valoraciones se gestionan de forma persistente.
 
 ## [1.4.1] - 2026-02-03

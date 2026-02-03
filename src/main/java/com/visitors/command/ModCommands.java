@@ -26,6 +26,20 @@ public class ModCommands {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
+        // /visitors resetstars - Reset all ratings
+        dispatcher.register(Commands.literal("visitors")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal("resetstars")
+                        .executes(context -> {
+                            ServerLevel level = context.getSource().getLevel();
+                            VisitorsSavedData.get(level).resetReviews(level);
+                            context.getSource()
+                                    .sendSuccess(() -> Component.literal(
+                                            "§c§l[Reset] §fTodas las estrellas y valoraciones han sido reseteadas."),
+                                            true);
+                            return 1;
+                        })));
+
         // /visitorspos1 - Set first corner of visitor area
         dispatcher.register(Commands.literal("visitorspos1")
                 .requires(source -> source.hasPermission(2))
@@ -469,16 +483,6 @@ public class ModCommands {
                                                     .literal("§a§l[Config] §fAltura de sillas ajustada a: §e" + value),
                                             true);
                                     return 1;
-                                })))
-                .then(Commands.literal("resetstars")
-                        .executes(context -> {
-                            ServerLevel level = context.getSource().getLevel();
-                            VisitorsSavedData.get(level).resetReviews(level);
-                            context.getSource()
-                                    .sendSuccess(() -> Component.literal(
-                                            "§c§l[Reset] §fTodas las estrellas y valoraciones han sido reseteadas."),
-                                            true);
-                            return 1;
-                        })));
+                                }))));
     }
 }
