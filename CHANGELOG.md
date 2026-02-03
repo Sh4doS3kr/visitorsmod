@@ -9,6 +9,11 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.4.1] - 2026-02-03
+### Corregido
+- Fix Sentado Definitivo: Aumentado el radio de detección de sillas y forzado el teletransporte al centro del bloque para asegurar que los NPCs se sienten siempre.
+- Estabilidad de IA: Mejora en la transición entre caminar y sentarse.
+
 ## [1.4.0] - 2026-02-03
 ### Añadido
 - Balance de Satisfacción: Los NPCs ahora son menos estrictos y las puntuaciones son más justas.

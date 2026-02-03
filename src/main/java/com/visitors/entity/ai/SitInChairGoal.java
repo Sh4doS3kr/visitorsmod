@@ -74,14 +74,15 @@ public class SitInChairGoal extends Goal {
             return;
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-        if (dist < 0.5) {
+        if (dist < 1.25) { // Aumentado para mayor facilidad de detección (radio ~1.1 bloques)
             if (!visitor.isPassenger()) {
                 Level level = visitor.level();
                 if (level instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) level;
-                    // Create invisible seat
-                    // Offset Y by -0.5 to -0.6 for standard blocks so they look seated ON the
-                    // surface
+
+                    // Force teleport to center to avoid being stuck at block edges
+                    visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
+
                     double offsetY = -0.55;
 
                     // Check if block below is a table/high block (detecting by height in image)
@@ -99,6 +100,11 @@ public class SitInChairGoal extends Goal {
                         visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
                         visitor.getNavigation().stop();
                         visitor.startRiding(seat);
+
+                        // Feedback visual de éxito
+                        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE,
+                                chairPos.getX() + 0.5, chairPos.getY() + 0.5, chairPos.getZ() + 0.5, 3, 0.1, 0.1, 0.1,
+                                0.02);
                     }
                 }
             }
