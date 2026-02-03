@@ -10,11 +10,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Registro de todos los comandos del mod.
  */
 public class ModCommands {
+
+    public static final java.util.Set<java.util.UUID> chairEditors = new java.util.HashSet<>();
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
@@ -435,6 +440,21 @@ public class ModCommands {
                             VisitorsSavedData.get(player.serverLevel()).getChairs().clear();
                             VisitorsSavedData.get(player.serverLevel()).setDirty();
                             player.sendSystemMessage(Component.literal("§c¡Todas las sillas han sido eliminadas!"));
+                            return 1;
+                        }))
+                .then(Commands.literal("edit")
+                        .executes(context -> {
+                            ServerPlayer player = context.getSource().getPlayerOrException();
+                            UUID uuid = player.getUUID();
+                            if (chairEditors.contains(uuid)) {
+                                chairEditors.remove(uuid);
+                                player.sendSystemMessage(Component.literal("§c§l[Modo Edición] §fDesactivado."));
+                            } else {
+                                chairEditors.add(uuid);
+                                player.sendSystemMessage(Component.literal("§a§l[Modo Edición] §fActivado."));
+                                player.sendSystemMessage(Component.literal(
+                                        "§7Haz click derecho en un bloque para agregarlo o quitarlo como silla."));
+                            }
                             return 1;
                         })));
     }

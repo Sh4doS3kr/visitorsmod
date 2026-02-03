@@ -12,6 +12,7 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 ## [1.3.1] - 2026-02-03
 ### Añadido
 - Sistema de Asientos REAL: Los NPCs ahora se sientan físicamente en las sillas (usando monturas invisibles).
+- Modo de Edición Visual: Usa `/visitorschair edit` para ver hitboxes de sillas y seleccionarlas con click derecho.
 - Corrección visual: Los NPCs ya no se quedan de pie sobre las mesas o sillas.
 - Optimización de altura: Ajuste automático de la posición de sentado.
 
