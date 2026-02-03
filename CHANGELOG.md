@@ -1,6 +1,6 @@
 # 📜 Changelog
 
-![Version](https://img.shields.io/badge/versión-1.6.0--HOTFIX-red?style=flat-square&logo=git)
+![Version](https://img.shields.io/badge/versión-1.6.1-blue?style=flat-square&logo=git)
 ![Build Status](https://img.shields.io/badge/build-passing-success?style=flat-square&logo=github-actions)
 ![Code Coverage](https://img.shields.io/badge/coverage-98%25-green?style=flat-square)
 ![Tech Stack](https://img.shields.io/badge/backend-Java-orange?style=flat-square&logo=openjdk)
@@ -9,9 +9,14 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.6.1] - 2026-02-03
+#### Corregido
+- **FIX DEFINITIVO DE SENTADO:** Se ha reescrito la lógica de interacción con las sillas. Los NPCs ahora se sientan firmemente y no "saltan" ni se levantan hasta que su tiempo de estancia termina o necesitan comer.
+- **Sincronización de Gestión:** Mejorada la precisión de los cronómetros de inspectores y contratistas para evitar desfases o valores incorrectos (0d).
+
 ## [1.6.0-HOTFIX] - 2026-02-03
 #### Corregido
-- **FIX SUPREMO:** Solucionado el bug crítico que generaba miles de Armor Stands (asientos), eliminando el lag y los crashes del servidor.
+- **FIX IMPORTANTE:** Solucionado el bug crítico que generaba miles de Armor Stands (asientos), eliminando el lag y los crashes del servidor.
 - **Sentado Estable:** Los visitantes ahora permanecen sentados correctamente hasta que su tiempo de estancia termine o necesiten comer. No se levantan prematuramente.
 - **Gestión de Tiempos:** Corregido el HUD que mostraba "0d". Ahora los inspectores y contratistas respetan los tiempos programados y no aparecen inmediatamente al iniciar el servidor.
 - **Crash de Atributos:** Registro correcto de atributos para todos los nuevos NPCs para evitar crashes al spawnear.

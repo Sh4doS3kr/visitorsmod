@@ -15,7 +15,6 @@ public class SitInChairGoal extends Goal {
     private final VisitorEntity visitor;
     private final double speed;
     private BlockPos chairPos;
-    private int sittingTicks;
     private ArmorStand currentSeat;
 
     public SitInChairGoal(VisitorEntity visitor, double speed) {
@@ -28,11 +27,16 @@ public class SitInChairGoal extends Goal {
     public boolean canUse() {
         if (visitor.isHungry() || visitor.isEscaping() || visitor.shouldLeave())
             return false;
-        if (visitor.getVisitorState() != VisitorEntity.VisitorState.WANDERING)
+
+        // Only start if wandering (WANDERING or SITTING if it was already sitting but
+        // goal restarted)
+        if (visitor.getVisitorState() != VisitorEntity.VisitorState.WANDERING &&
+                visitor.getVisitorState() != VisitorEntity.VisitorState.SITTING)
             return false;
 
-        // 5% chance every check
-        if (visitor.getRandom().nextFloat() > 0.05f)
+        // 5% chance every check if wandering
+        if (visitor.getVisitorState() == VisitorEntity.VisitorState.WANDERING
+                && visitor.getRandom().nextFloat() > 0.05f)
             return false;
 
         Level level = visitor.level();
@@ -46,13 +50,12 @@ public class SitInChairGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        // Stay until hungry or should leave. Remove the timer limit as requested.
+        // Stay until hungry or should leave.
         return chairPos != null && !visitor.isHungry() && !visitor.shouldLeave();
     }
 
     @Override
     public void start() {
-        sittingTicks = 0;
         Level level = visitor.level();
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel) level;
@@ -66,18 +69,25 @@ public class SitInChairGoal extends Goal {
         if (visitor.isPassenger()) {
             visitor.stopRiding();
         }
-        if (currentSeat != null) {
-            currentSeat.discard();
-            currentSeat = null;
-        }
+        cleanupSeat();
 
         Level level = visitor.level();
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel) level;
             VisitorsSavedData.get(serverLevel).releaseChair(chairPos);
         }
-        visitor.setVisitorState(VisitorEntity.VisitorState.WANDERING);
+
+        if (visitor.getVisitorState() == VisitorEntity.VisitorState.SITTING) {
+            visitor.setVisitorState(VisitorEntity.VisitorState.WANDERING);
+        }
         this.chairPos = null;
+    }
+
+    private void cleanupSeat() {
+        if (currentSeat != null) {
+            currentSeat.discard();
+            currentSeat = null;
+        }
     }
 
     @Override
@@ -86,50 +96,54 @@ public class SitInChairGoal extends Goal {
             return;
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-        if (dist < 2.5) {
+        if (dist < 2.0) { // Slightly tighter for mounting
             if (!visitor.isPassenger()) {
-                // If we were already sitting and lost the seat, something is wrong, stop goal
-                // to avoid spamming Armor Stands. This is the fix for the 5000 Armor Stands.
-                if (currentSeat != null) {
-                    this.stop();
-                    return;
-                }
-
                 Level level = visitor.level();
                 if (level instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) level;
 
-                    // Force position to center
-                    visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
+                    // If we have a seat but are not riding it, try to re-mount or replace it
+                    if (currentSeat != null) {
+                        if (!currentSeat.isAlive()) {
+                            cleanupSeat();
+                        } else {
+                            visitor.startRiding(currentSeat);
+                            return; // Wait for next tick to see if it stuck
+                        }
+                    }
 
-                    double offsetY = VisitorsSavedData.get(serverLevel).getChairYOffset();
+                    // Create new seat if none exists
+                    if (currentSeat == null) {
+                        visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
+                        double offsetY = VisitorsSavedData.get(serverLevel).getChairYOffset();
 
-                    currentSeat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
-                    currentSeat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
-                    currentSeat.setInvisible(true);
-                    currentSeat.setInvulnerable(true);
+                        currentSeat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
+                        currentSeat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
+                        currentSeat.setInvisible(true);
+                        currentSeat.setInvulnerable(true);
+                        // Marker and Small are private/hard access in some forge versions, keeping it
+                        // simple
 
-                    if (serverLevel.addFreshEntity(currentSeat)) {
-                        visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
-                        visitor.getNavigation().stop();
-                        visitor.startRiding(currentSeat);
-
-                        // Small smoke to indicate sitting
-                        serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE,
-                                chairPos.getX() + 0.5, chairPos.getY() + 0.5, chairPos.getZ() + 0.5, 3, 0.1, 0.1, 0.1,
-                                0.02);
+                        if (serverLevel.addFreshEntity(currentSeat)) {
+                            visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
+                            visitor.getNavigation().stop();
+                            visitor.startRiding(currentSeat);
+                        }
                     }
                 }
+            } else {
+                // Ensure state is SITTING if riding
+                if (visitor.getVisitorState() != VisitorEntity.VisitorState.SITTING) {
+                    visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
+                }
+                visitor.getNavigation().stop();
             }
-            sittingTicks++;
         } else {
-            // If we are too far, and we are riding, dismount.
+            // If we are too far, move towards it. If we were riding, something pushed us,
+            // cleanup and re-route.
             if (visitor.isPassenger()) {
                 visitor.stopRiding();
-                if (currentSeat != null) {
-                    currentSeat.discard();
-                    currentSeat = null;
-                }
+                cleanupSeat();
             }
             visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
         }

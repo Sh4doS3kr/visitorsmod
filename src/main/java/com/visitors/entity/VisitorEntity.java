@@ -87,6 +87,7 @@ public class VisitorEntity extends PathfinderMob {
     private boolean shouldLeave = false;
     private boolean hasGivenReward = false;
     private int killerClicks = 0;
+    private int sittingDismountTicks = 0;
 
     private BlockPos areaMin;
     private BlockPos areaMax;
@@ -164,14 +165,17 @@ public class VisitorEntity extends PathfinderMob {
             this.setXRot(0);
             this.setYRot(this.yRotO);
             this.setPose(net.minecraft.world.entity.Pose.SITTING); // Visual sitting
+
             if (!this.level().isClientSide && !this.isPassenger()) {
-                // If we are supposed to be sitting but have no seat, go back to wandering
-                // this avoids NPCs being stuck in SITTING pose while standing
-                setVisitorState(VisitorState.WANDERING);
+                sittingDismountTicks++;
+                if (sittingDismountTicks > 10) { // 0.5s buffer
+                    setVisitorState(VisitorState.WANDERING);
+                    sittingDismountTicks = 0;
+                }
+            } else {
+                sittingDismountTicks = 0;
             }
         } else if (!this.level().isClientSide && this.isPassenger() && this.getVehicle() instanceof ArmorStand) {
-            // If we are NOT in SITTING state but are riding a seat, dismount and remove
-            // seat
             Entity seat = this.getVehicle();
             this.stopRiding();
             seat.discard();

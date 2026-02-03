@@ -5,9 +5,9 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '1.6.0-HOTFIX'
+version = '1.6.1'
 group = 'com.visitors'
-archivesBaseName = 'VisitorsMod-Management-HOTFIX'
+archivesBaseName = 'VisitorsMod-Management-v1.6.1'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
