@@ -2,6 +2,7 @@ package com.visitors.event;
 
 import com.visitors.command.ModCommands;
 import com.visitors.data.VisitorsSavedData;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -58,6 +59,9 @@ public class ChairEventHandler {
         if (event.getEntity() instanceof ServerPlayer) {
             ServerPlayer serverPlayer = (ServerPlayer) event.getEntity();
             if (ModCommands.chairEditors.contains(serverPlayer.getUUID())) {
+                if (event.getHand() != InteractionHand.MAIN_HAND)
+                    return;
+
                 ServerLevel level = (ServerLevel) serverPlayer.level();
                 BlockPos pos = event.getPos();
                 VisitorsSavedData data = VisitorsSavedData.get(level);

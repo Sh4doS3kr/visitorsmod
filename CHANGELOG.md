@@ -9,6 +9,11 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.3.2] - 2026-02-03
+### Corregido
+- Fix Modo Edición: Corregido el error de "doble disparo" que causaba que las sillas se eliminaran inmediatamente después de ser añadidas.
+- Estabilidad: Reforzada la lógica de toggle en `ChairEventHandler`.
+
 ## [1.3.1] - 2026-02-03
 ### Añadido
 - Sistema de Asientos REAL: Los NPCs ahora se sientan físicamente en las sillas (usando monturas invisibles).
