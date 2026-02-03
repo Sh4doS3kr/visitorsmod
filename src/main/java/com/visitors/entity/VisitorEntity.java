@@ -210,13 +210,16 @@ public class VisitorEntity extends PathfinderMob {
                 if (trashCooldown > 0) {
                     trashCooldown -= 100;
                 } else if (getVisitorState() == VisitorState.WANDERING && this.random.nextFloat() < 0.05f) {
-                    // 5% chance every 5 seconds if wandering
-                    if (this.level() instanceof ServerLevel) {
-                        ServerLevel serverLevel = (ServerLevel) this.level();
-                        TrashEntity trash = new TrashEntity(ModEntities.TRASH.get(), serverLevel);
-                        trash.setPos(this.getX(), this.getY(), this.getZ());
-                        if (serverLevel.addFreshEntity(trash)) {
-                            trashCooldown = 12000; // 10 minutes approx between littering
+                    // Check height Y=68 (+/- 1.0 buffer for safety)
+                    if (Math.abs(this.getY() - 68.0) < 1.0) {
+                        // 5% chance every 5 seconds if wandering
+                        if (this.level() instanceof ServerLevel) {
+                            ServerLevel serverLevel = (ServerLevel) this.level();
+                            TrashEntity trash = new TrashEntity(ModEntities.TRASH.get(), serverLevel);
+                            trash.setPos(this.getX(), this.getY(), this.getZ());
+                            if (serverLevel.addFreshEntity(trash)) {
+                                trashCooldown = 12000; // 10 minutes approx between littering
+                            }
                         }
                     }
                 }
@@ -265,6 +268,13 @@ public class VisitorEntity extends PathfinderMob {
                         } else if (spacePerPerson > 20.0) {
                             if (this.random.nextFloat() < 0.1f)
                                 satisfactionScore = Math.min(5, satisfactionScore + 1);
+                        }
+
+                        // Comfort Bonus (Sitting)
+                        if (getVisitorState() == VisitorState.SITTING) {
+                            if (this.random.nextFloat() < 0.2f) { // 20% chance every 5s
+                                satisfactionScore = Math.min(5, satisfactionScore + 1);
+                            }
                         }
                     }
                 }

@@ -45,6 +45,11 @@ public class VisitorRenderer extends MobRenderer<VisitorEntity, PlayerModel<Visi
         public void render(VisitorEntity entity, float entityYaw, float partialTicks,
                         com.mojang.blaze3d.vertex.PoseStack poseStack,
                         net.minecraft.client.renderer.MultiBufferSource buffer, int packedLight) {
+                // Force riding animation if sitting
+                if (entity.getVisitorState() == VisitorEntity.VisitorState.SITTING) {
+                        this.model.riding = true;
+                }
+
                 super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
 
                 if (entity.isEscaping()) {

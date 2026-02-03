@@ -28,13 +28,10 @@ public class SitInChairGoal extends Goal {
         if (visitor.isHungry() || visitor.isEscaping() || visitor.shouldLeave())
             return false;
 
-        // Only start if wandering (WANDERING or SITTING if it was already sitting but
-        // goal restarted)
         if (visitor.getVisitorState() != VisitorEntity.VisitorState.WANDERING &&
                 visitor.getVisitorState() != VisitorEntity.VisitorState.SITTING)
             return false;
 
-        // 5% chance every check if wandering
         if (visitor.getVisitorState() == VisitorEntity.VisitorState.WANDERING
                 && visitor.getRandom().nextFloat() > 0.05f)
             return false;
@@ -50,7 +47,6 @@ public class SitInChairGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        // Stay until hungry or should leave.
         return chairPos != null && !visitor.isHungry() && !visitor.shouldLeave();
     }
 
@@ -61,7 +57,6 @@ public class SitInChairGoal extends Goal {
             ServerLevel serverLevel = (ServerLevel) level;
             VisitorsSavedData.get(serverLevel).setChairOccupied(chairPos, visitor.getUUID());
         }
-        visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
     }
 
     @Override
@@ -96,56 +91,52 @@ public class SitInChairGoal extends Goal {
             return;
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-        if (dist < 2.0) { // Slightly tighter for mounting
+
+        if (dist < 1.5) { // Closer threshold
             if (!visitor.isPassenger()) {
                 Level level = visitor.level();
                 if (level instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) level;
 
-                    // If we have a seat but are not riding it, try to re-mount or replace it
-                    if (currentSeat != null) {
-                        if (!currentSeat.isAlive()) {
-                            cleanupSeat();
-                        } else {
-                            visitor.startRiding(currentSeat);
-                            return; // Wait for next tick to see if it stuck
-                        }
+                    if (currentSeat != null && !currentSeat.isAlive()) {
+                        cleanupSeat();
                     }
 
-                    // Create new seat if none exists
                     if (currentSeat == null) {
-                        visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-                        double offsetY = VisitorsSavedData.get(serverLevel).getChairYOffset();
+                        // Teleport slightly above chair center
+                        visitor.setPos(chairPos.getX() + 0.5, chairPos.getY() + 0.1, chairPos.getZ() + 0.5);
+
+                        double baseOffset = VisitorsSavedData.get(serverLevel).getChairYOffset();
+                        // Correction for normal ArmorStand (NPC sits high, so we lower the stand)
+                        double correction = -1.5;
 
                         currentSeat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
-                        currentSeat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
+                        currentSeat.setPos(chairPos.getX() + 0.5, chairPos.getY() + baseOffset + correction,
+                                chairPos.getZ() + 0.5);
                         currentSeat.setInvisible(true);
                         currentSeat.setInvulnerable(true);
-                        // Marker and Small are private/hard access in some forge versions, keeping it
-                        // simple
+                        currentSeat.setNoGravity(true);
 
                         if (serverLevel.addFreshEntity(currentSeat)) {
                             visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
                             visitor.getNavigation().stop();
-                            visitor.startRiding(currentSeat);
+                            visitor.startRiding(currentSeat, true); // Force riding
                         }
+                    } else {
+                        // Re-mount if lost
+                        visitor.startRiding(currentSeat, true);
                     }
                 }
-            } else {
-                // Ensure state is SITTING if riding
-                if (visitor.getVisitorState() != VisitorEntity.VisitorState.SITTING) {
-                    visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
-                }
-                visitor.getNavigation().stop();
             }
+            // Keep looking forward or at something
+            visitor.getNavigation().stop();
         } else {
-            // If we are too far, move towards it. If we were riding, something pushed us,
-            // cleanup and re-route.
+            // Move to chair
+            visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
             if (visitor.isPassenger()) {
                 visitor.stopRiding();
                 cleanupSeat();
             }
-            visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
         }
     }
 }
