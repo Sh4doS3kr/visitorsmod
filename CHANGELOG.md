@@ -1,6 +1,6 @@
 # 📜 Changelog
 
-![Version](https://img.shields.io/badge/versión-1.2.0-blue?style=flat-square&logo=git)
+![Version](https://img.shields.io/badge/versión-1.6.0--HOTFIX-red?style=flat-square&logo=git)
 ![Build Status](https://img.shields.io/badge/build-passing-success?style=flat-square&logo=github-actions)
 ![Code Coverage](https://img.shields.io/badge/coverage-98%25-green?style=flat-square)
 ![Tech Stack](https://img.shields.io/badge/backend-Java-orange?style=flat-square&logo=openjdk)
@@ -9,16 +9,10 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
-## [1.5.1] - 2026-02-03
-### Corregido
-- Sentado Instantáneo: Aumentado radicalmente el radio de detección para que los NPCs se sienten en cuanto estén cerca de la silla.
-- Limite de Estrellas: Corregido bug que permitía superar las 5 estrellas (clamping estricto de 0-5).
-
-## [1.5.0] - 2026-02-03
-### Añadido
-- Altura de Sentado Configurable: Añadido el comando `/visitorschair offset <valor>` para ajustar la altura de los NPCs al sentarse.
-- Reseteo de Estrellas: Añadido el comando `/visitors resetstars` para borrar todas las valoraciones y empezar de cero.
-- Persistencia: El ajuste de altura y las valoraciones se gestionan de forma persistente.
+## [1.6.0-HOTFIX] - 2026-02-03
+#### Corregido
+- **Crash de Atributos:** Corregido un `NullPointerException` crítico que ocurría al intentar spawnear al Contratista o Inspector debido a la falta de registro de atributos en el bus de eventos de Forge.
+- **Estabilidad del Servidor:** Asegurado que todos los nuevos NPCs (Contractor, Inspector, Cleaner) tengan sus atributos base correctamente inicializados.
 
 ## [1.6.0] - 2026-02-03
 #### Añadido
@@ -34,9 +28,7 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - Registro seguro de renderers de entidades en hilos de cliente.
 - Sincronización robusta de datos de gestión local-servidor vía red.
 
-#### Hotfix (Crash al iniciar)
-- **Atributos de Entidad:** Corregido un `NullPointerException` crítico que ocurría al intentar spawnear al Contratista o Inspector debido a la falta de registro de atributos en el bus de eventos de Forge.
-- **Estabilidad del Servidor:** Asegurado que todos los nuevos NPCs (Contractor, Inspector, Cleaner) tengan sus atributos base correctamente inicializados.
+## [1.5.1] - 2026-02-03
 
 ## [1.4.1] - 2026-02-03
 ### Corregido
