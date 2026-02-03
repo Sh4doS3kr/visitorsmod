@@ -38,6 +38,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class VisitorEntity extends PathfinderMob {
 
@@ -160,6 +161,15 @@ public class VisitorEntity extends PathfinderMob {
             this.setXRot(0);
             this.setYRot(this.yRotO);
             this.setPose(net.minecraft.world.entity.Pose.SITTING); // Visual sitting
+            if (!this.level().isClientSide && !this.isPassenger()) {
+                // If we are supposed to be sitting but have no seat, go back to wandering
+                // this avoids NPCs being stuck in SITTING pose while standing
+                setVisitorState(VisitorState.WANDERING);
+            }
+        } else if (!this.level().isClientSide && this.isPassenger() && this.getVehicle() instanceof ArmorStand) {
+            // If we are NOT in SITTING state but are riding a seat, dismount and remove
+            // seat
+            this.stopRiding();
         }
 
         if (!this.level().isClientSide) {
@@ -577,6 +587,9 @@ public class VisitorEntity extends PathfinderMob {
 
     @Override
     public void remove(RemovalReason reason) {
+        if (!this.level().isClientSide && this.isPassenger() && this.getVehicle() instanceof ArmorStand) {
+            this.getVehicle().discard();
+        }
         if (!this.level().isClientSide && reason == RemovalReason.DISCARDED && !isEscaping() && !isKiller()) {
             if (this.level() instanceof ServerLevel) {
                 ServerLevel serverLevel = (ServerLevel) this.level();

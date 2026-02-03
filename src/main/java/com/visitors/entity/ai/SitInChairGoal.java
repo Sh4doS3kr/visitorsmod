@@ -6,6 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import java.util.EnumSet;
 
 public class SitInChairGoal extends Goal {
@@ -72,11 +75,38 @@ public class SitInChairGoal extends Goal {
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
         if (dist < 0.5) {
-            visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
-            visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-            visitor.getNavigation().stop();
+            if (!visitor.isPassenger()) {
+                Level level = visitor.level();
+                if (level instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) level;
+                    // Create invisible seat
+                    // Offset Y by -0.5 to -0.6 for standard blocks so they look seated ON the
+                    // surface
+                    double offsetY = -0.55;
+
+                    // Check if block below is a table/high block (detecting by height in image)
+                    // If the user put chairs on tables, Y might be higher. we trust chairPos.
+
+                    ArmorStand seat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
+                    seat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
+                    seat.setInvisible(true);
+
+                    seat.setNoBasePlate(true);
+                    seat.setNoGravity(true);
+                    seat.setInvulnerable(true);
+
+                    if (serverLevel.addFreshEntity(seat)) {
+                        visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
+                        visitor.getNavigation().stop();
+                        visitor.startRiding(seat);
+                    }
+                }
+            }
             sittingTicks++;
         } else {
+            if (visitor.isPassenger()) {
+                visitor.stopRiding();
+            }
             visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
         }
     }

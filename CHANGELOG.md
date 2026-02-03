@@ -9,10 +9,11 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
-## [1.3.0] - 2026-02-03
+## [1.3.1] - 2026-02-03
 ### Añadido
-- Mecánica Anti-Killer: Pulsa click derecho 3 veces para derrotar Killers y ganar 10 estrellas + reputación.
-- Mensajes en action bar para contador de clicks.
+- Sistema de Asientos REAL: Los NPCs ahora se sientan físicamente en las sillas (usando monturas invisibles).
+- Corrección visual: Los NPCs ya no se quedan de pie sobre las mesas o sillas.
+- Optimización de altura: Ajuste automático de la posición de sentado.
 
 ---
 
