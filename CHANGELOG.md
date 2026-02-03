@@ -9,6 +9,11 @@
 
 Todos los cambios notables, refactorizaciones de código y optimizaciones de rendimiento se documentan en este archivo.
 
+## [1.5.1] - 2026-02-03
+### Corregido
+- Sentado Instantáneo: Aumentado radicalmente el radio de detección para que los NPCs se sienten en cuanto estén cerca de la silla.
+- Limite de Estrellas: Corregido bug que permitía superar las 5 estrellas (clamping estricto de 0-5).
+
 ## [1.5.0] - 2026-02-03
 ### Añadido
 - Altura de Sentado Configurable: Añadido el comando `/visitorschair offset <valor>` para ajustar la altura de los NPCs al sentarse.

@@ -74,7 +74,7 @@ public class SitInChairGoal extends Goal {
             return;
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-        if (dist < 1.25) { // Aumentado para mayor facilidad de detección (radio ~1.1 bloques)
+        if (dist < 2.5) { // Aumentado para sentado instantáneo (radio ~1.58 bloques)
             if (!visitor.isPassenger()) {
                 Level level = visitor.level();
                 if (level instanceof ServerLevel) {

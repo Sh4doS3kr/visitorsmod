@@ -432,7 +432,9 @@ public class VisitorsSavedData extends SavedData {
 
     // Rating Logic
     public void addReview(int stars, ServerLevel level) {
-        ratingSum += stars;
+        // Clamp stars between 0 and 5
+        int clampedStars = Math.max(0, Math.min(5, stars));
+        ratingSum += clampedStars;
         ratingCount++;
         setDirty();
         updateScoreboard(level);
@@ -442,7 +444,10 @@ public class VisitorsSavedData extends SavedData {
     }
 
     public float getRating() {
-        return ratingCount == 0 ? 0 : ratingSum / ratingCount;
+        if (ratingCount == 0)
+            return 0.0f;
+        float avg = ratingSum / (float) ratingCount;
+        return Math.max(0.0f, Math.min(5.0f, avg));
     }
 
     public int getRatingCount() {
