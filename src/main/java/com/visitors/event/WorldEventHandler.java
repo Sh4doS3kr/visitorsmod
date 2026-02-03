@@ -32,14 +32,22 @@ public class WorldEventHandler {
 
             // Contractor Event (Every 3 days = 72000 ticks)
             if (currentTime - data.getLastContractorTime() >= 72000) {
-                spawnManagementNPC(level, data, "contractor");
-                data.setLastContractorTime(currentTime);
+                // Check if it's daytime (0-12000 ticks)
+                long timeOfDay = currentTime % 24000;
+                if (timeOfDay < 12000) {
+                    spawnManagementNPC(level, data, "contractor");
+                    data.setLastContractorTime(currentTime);
+                }
             }
 
             // Inspection Event (Every 10 days = 240000 ticks)
             if (currentTime - data.getLastInspectionTime() >= 240000) {
-                spawnManagementNPC(level, data, "inspector");
-                data.setLastInspectionTime(currentTime);
+                // Check if it's daytime (0-12000 ticks)
+                long timeOfDay = currentTime % 24000;
+                if (timeOfDay < 12000) {
+                    spawnManagementNPC(level, data, "inspector");
+                    data.setLastInspectionTime(currentTime);
+                }
             }
 
             // Sync with HUD (every 20 ticks)

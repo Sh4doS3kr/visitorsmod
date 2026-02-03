@@ -58,6 +58,24 @@ public class VisitorEntity extends PathfinderMob {
             EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(VisitorEntity.class,
             EntityDataSerializers.INT);
+
+    // Physical Order Queue at X=-506, Y=68, Z=546-551
+    private static final java.util.List<VisitorEntity> orderQueue = new java.util.ArrayList<>();
+
+    public void addToQueue() {
+        if (!orderQueue.contains(this)) {
+            orderQueue.add(this);
+        }
+    }
+
+    public void removeFromQueue() {
+        orderQueue.remove(this);
+    }
+
+    public int getQueuePosition() {
+        return orderQueue.indexOf(this);
+    }
+
     private static final EntityDataAccessor<Integer> TARGET_AREA = SynchedEntityData.defineId(VisitorEntity.class,
             EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_ESCAPING = SynchedEntityData.defineId(VisitorEntity.class,
@@ -77,7 +95,7 @@ public class VisitorEntity extends PathfinderMob {
     private int deliveryTimer = 0;
     private int trashCooldown = 0;
     private int lowLightTicks = 0;
-    private int satisfactionScore = 4; // Subida base de 3 a 4
+    private int satisfactionScore = 5; // BUFF: Subida base de 4 a 5 (Máximo inicial)
 
     private static final int MIN_STAY_TIME = 60 * 20;
     private static final int MAX_STAY_TIME = 300 * 20;
@@ -153,6 +171,7 @@ public class VisitorEntity extends PathfinderMob {
         this.goalSelector.addGoal(4, new WanderInBabyZoneGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new WanderInBirthdayZoneGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new WanderInAreaGoal(this, 1.0D));
+        this.goalSelector.addGoal(2, new WaitInQueueGoal(this, 1.0D)); // Priority goal for hungry customers
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
     }
@@ -401,6 +420,8 @@ public class VisitorEntity extends PathfinderMob {
                             SoundSource.NEUTRAL, 1.0f, 1.0f);
                     giveTip(player);
                     player.sendSystemMessage(Component.literal("§a¡Gracias! ¡Estaba delicioso!"));
+                    // After eating, try to sit again
+                    setVisitorState(VisitorState.WANDERING);
                 }
                 return InteractionResult.SUCCESS;
             }
