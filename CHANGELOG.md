@@ -11,8 +11,10 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 
 ## [1.6.0-HOTFIX] - 2026-02-03
 #### Corregido
-- **Crash de Atributos:** Corregido un `NullPointerException` crítico que ocurría al intentar spawnear al Contratista o Inspector debido a la falta de registro de atributos en el bus de eventos de Forge.
-- **Estabilidad del Servidor:** Asegurado que todos los nuevos NPCs (Contractor, Inspector, Cleaner) tengan sus atributos base correctamente inicializados.
+- **FIX SUPREMO:** Solucionado el bug crítico que generaba miles de Armor Stands (asientos), eliminando el lag y los crashes del servidor.
+- **Sentado Estable:** Los visitantes ahora permanecen sentados correctamente hasta que su tiempo de estancia termine o necesiten comer. No se levantan prematuramente.
+- **Gestión de Tiempos:** Corregido el HUD que mostraba "0d". Ahora los inspectores y contratistas respetan los tiempos programados y no aparecen inmediatamente al iniciar el servidor.
+- **Crash de Atributos:** Registro correcto de atributos para todos los nuevos NPCs para evitar crashes al spawnear.
 
 ## [1.6.0] - 2026-02-03
 #### Añadido

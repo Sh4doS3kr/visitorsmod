@@ -3,15 +3,10 @@ package com.visitors.event;
 import com.visitors.VisitorsMod;
 import com.visitors.data.VisitorsSavedData;
 import com.visitors.entity.ModEntities;
-import com.visitors.VisitorsMod;
-import com.visitors.data.VisitorsSavedData;
-import com.visitors.entity.ModEntities;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +21,15 @@ public class WorldEventHandler {
             VisitorsSavedData data = VisitorsSavedData.get(level);
             long currentTime = level.dayTime();
 
+            // Initialize timers if they are 0 (first run or world creation)
+            // to avoid immediate spawning
+            if (data.getLastContractorTime() == 0) {
+                data.setLastContractorTime(currentTime);
+            }
+            if (data.getLastInspectionTime() == 0) {
+                data.setLastInspectionTime(currentTime);
+            }
+
             // Contractor Event (Every 3 days = 72000 ticks)
             if (currentTime - data.getLastContractorTime() >= 72000) {
                 spawnManagementNPC(level, data, "contractor");
@@ -38,6 +42,13 @@ public class WorldEventHandler {
                 data.setLastInspectionTime(currentTime);
             }
 
+            // Sync with HUD (every 20 ticks)
+            if (level.getGameTime() % 20 == 0) {
+                long nextInsp = Math.max(0, 240000 - (currentTime - data.getLastInspectionTime()));
+                long nextCont = Math.max(0, 72000 - (currentTime - data.getLastContractorTime()));
+                com.visitors.network.ModMessages.sendToAllClients(
+                        new com.visitors.network.S2CManagementSyncPacket(nextInsp, nextCont, data.isClosedBySanity()));
+            }
         }
     }
 

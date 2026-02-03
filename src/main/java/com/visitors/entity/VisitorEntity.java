@@ -39,6 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class VisitorEntity extends PathfinderMob {
@@ -171,7 +172,9 @@ public class VisitorEntity extends PathfinderMob {
         } else if (!this.level().isClientSide && this.isPassenger() && this.getVehicle() instanceof ArmorStand) {
             // If we are NOT in SITTING state but are riding a seat, dismount and remove
             // seat
+            Entity seat = this.getVehicle();
             this.stopRiding();
+            seat.discard();
         }
 
         if (!this.level().isClientSide) {

@@ -16,6 +16,7 @@ public class SitInChairGoal extends Goal {
     private final double speed;
     private BlockPos chairPos;
     private int sittingTicks;
+    private ArmorStand currentSeat;
 
     public SitInChairGoal(VisitorEntity visitor, double speed) {
         this.visitor = visitor;
@@ -29,6 +30,8 @@ public class SitInChairGoal extends Goal {
             return false;
         if (visitor.getVisitorState() != VisitorEntity.VisitorState.WANDERING)
             return false;
+
+        // 5% chance every check
         if (visitor.getRandom().nextFloat() > 0.05f)
             return false;
 
@@ -43,7 +46,8 @@ public class SitInChairGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return chairPos != null && !visitor.isHungry() && !visitor.shouldLeave() && sittingTicks < 2400;
+        // Stay until hungry or should leave. Remove the timer limit as requested.
+        return chairPos != null && !visitor.isHungry() && !visitor.shouldLeave();
     }
 
     @Override
@@ -59,6 +63,14 @@ public class SitInChairGoal extends Goal {
 
     @Override
     public void stop() {
+        if (visitor.isPassenger()) {
+            visitor.stopRiding();
+        }
+        if (currentSeat != null) {
+            currentSeat.discard();
+            currentSeat = null;
+        }
+
         Level level = visitor.level();
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel) level;
@@ -74,34 +86,35 @@ public class SitInChairGoal extends Goal {
             return;
 
         double dist = visitor.distanceToSqr(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
-        if (dist < 2.5) { // Aumentado para sentado instantáneo (radio ~1.58 bloques)
+        if (dist < 2.5) {
             if (!visitor.isPassenger()) {
+                // If we were already sitting and lost the seat, something is wrong, stop goal
+                // to avoid spamming Armor Stands. This is the fix for the 5000 Armor Stands.
+                if (currentSeat != null) {
+                    this.stop();
+                    return;
+                }
+
                 Level level = visitor.level();
                 if (level instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) level;
 
-                    // Force teleport to center to avoid being stuck at block edges
+                    // Force position to center
                     visitor.setPos(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5);
 
                     double offsetY = VisitorsSavedData.get(serverLevel).getChairYOffset();
 
-                    // Check if block below is a table/high block (detecting by height in image)
-                    // If the user put chairs on tables, Y might be higher. we trust chairPos.
+                    currentSeat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
+                    currentSeat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
+                    currentSeat.setInvisible(true);
+                    currentSeat.setInvulnerable(true);
 
-                    ArmorStand seat = new ArmorStand(EntityType.ARMOR_STAND, serverLevel);
-                    seat.setPos(chairPos.getX() + 0.5, chairPos.getY() + offsetY, chairPos.getZ() + 0.5);
-                    seat.setInvisible(true);
-
-                    seat.setNoBasePlate(true);
-                    seat.setNoGravity(true);
-                    seat.setInvulnerable(true);
-
-                    if (serverLevel.addFreshEntity(seat)) {
+                    if (serverLevel.addFreshEntity(currentSeat)) {
                         visitor.setVisitorState(VisitorEntity.VisitorState.SITTING);
                         visitor.getNavigation().stop();
-                        visitor.startRiding(seat);
+                        visitor.startRiding(currentSeat);
 
-                        // Feedback visual de éxito
+                        // Small smoke to indicate sitting
                         serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE,
                                 chairPos.getX() + 0.5, chairPos.getY() + 0.5, chairPos.getZ() + 0.5, 3, 0.1, 0.1, 0.1,
                                 0.02);
@@ -110,8 +123,13 @@ public class SitInChairGoal extends Goal {
             }
             sittingTicks++;
         } else {
+            // If we are too far, and we are riding, dismount.
             if (visitor.isPassenger()) {
                 visitor.stopRiding();
+                if (currentSeat != null) {
+                    currentSeat.discard();
+                    currentSeat = null;
+                }
             }
             visitor.getNavigation().moveTo(chairPos.getX() + 0.5, chairPos.getY(), chairPos.getZ() + 0.5, speed);
         }
