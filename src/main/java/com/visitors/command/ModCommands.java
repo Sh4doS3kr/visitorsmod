@@ -49,6 +49,19 @@ public class ModCommands {
                             level.addFreshEntity(trash);
                             player.sendSystemMessage(Component.literal("§e¡Basura spawneada!"));
                             return 1;
+                        }))
+                .then(Commands.literal("resettimes")
+                        .executes(context -> {
+                            ServerLevel level = context.getSource().getLevel();
+                            long currentTime = level.dayTime();
+                            VisitorsSavedData data = VisitorsSavedData.get(level);
+
+                            data.setLastContractorTime(currentTime);
+                            data.setLastInspectionTime(currentTime);
+
+                            context.getSource().sendSuccess(() -> Component.literal(
+                                    "§a§l[Reset] §fTiempos de gestión restablecidos al día actual."), true);
+                            return 1;
                         })));
 
         // /visitorspos1 - Set first corner of visitor area

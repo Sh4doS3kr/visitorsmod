@@ -20,6 +20,15 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - **Sincronización de Gestión:** Mejorada la precisión de los cronómetros de inspectores y contratistas.
 - **Distribución Balanceada:** Los visitantes ahora se reparten equitativamente entre todas las áreas configuradas.
 
+## [1.6.2] - 2026-02-04
+#### Añadido
+- **Comando Reset Times:** `/visitors resettimes` para reiniciar los temporizadores de inspectores y contratistas al tiempo actual. Útil si los días están desincronizados.
+
+## [1.6.1-HOTFIX-2] - 2026-02-04
+#### Cambios
+- **Gestión de Tiempos:** Corregido el HUD que mostraba "0d". Ahora los inspectores y contratistas respetan los tiempos programados y no aparecen inmediatamente al iniciar el servidor.
+- **Crash de Atributos:** Registro correcto de atributos para todos los nuevos NPCs para evitar crashes al spawnear.
+
 ## [1.6.0-HOTFIX] - 2026-02-03
 #### Corregido
 - **FIX IMPORTANTE:** Solucionado el bug crítico que generaba miles de Armor Stands (asientos), eliminando el lag y los crashes del servidor.
