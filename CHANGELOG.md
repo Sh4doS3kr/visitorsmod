@@ -16,7 +16,7 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - **Re-Sentado Automático:** Después de comer, los visitantes intentan buscar un asiento libre de nuevo.
 - **Balance de Reseñas:** Dar comida ahora **garantiza mínimo 4 estrellas** sin importar otros factores. Estar sentado otorga bonus progresivo.
 - **Restricción de Basura:** Los visitantes ahora solo tiran basura si están en la altura Y=68.
-- **Horarios de Gestión:** El Inspector aparece cada **5 días** y el Contratista cada **1 día** (solo de día).
+- **Horarios de Gestión:** El Inspector aparece cada **10 días** y el Contratista cada **5 días**.
 - **Sincronización de Gestión:** Mejorada la precisión de los cronómetros de inspectores y contratistas.
 - **Distribución Balanceada:** Los visitantes ahora se reparten equitativamente entre todas las áreas configuradas.
 

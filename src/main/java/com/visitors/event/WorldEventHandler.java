@@ -30,8 +30,8 @@ public class WorldEventHandler {
                 data.setLastInspectionTime(currentTime);
             }
 
-            // Contractor Event (Every 1 day = 24000 ticks)
-            if (currentTime - data.getLastContractorTime() >= 24000) {
+            // Contractor Event (Every 5 days = 120000 ticks)
+            if (currentTime - data.getLastContractorTime() >= 120000) {
                 // Check if it's daytime (0-12000 ticks)
                 long timeOfDay = currentTime % 24000;
                 if (timeOfDay < 12000) {
@@ -40,8 +40,8 @@ public class WorldEventHandler {
                 }
             }
 
-            // Inspection Event (Every 5 days = 120000 ticks)
-            if (currentTime - data.getLastInspectionTime() >= 120000) {
+            // Inspection Event (Every 10 days = 240000 ticks)
+            if (currentTime - data.getLastInspectionTime() >= 240000) {
                 // Check if it's daytime (0-12000 ticks)
                 long timeOfDay = currentTime % 24000;
                 if (timeOfDay < 12000) {
@@ -52,8 +52,8 @@ public class WorldEventHandler {
 
             // Sync with HUD (every 20 ticks)
             if (level.getGameTime() % 20 == 0) {
-                long nextInsp = Math.max(0, 120000 - (currentTime - data.getLastInspectionTime()));
-                long nextCont = Math.max(0, 24000 - (currentTime - data.getLastContractorTime()));
+                long nextInsp = Math.max(0, 240000 - (currentTime - data.getLastInspectionTime()));
+                long nextCont = Math.max(0, 120000 - (currentTime - data.getLastContractorTime()));
                 com.visitors.network.ModMessages.sendToAllClients(
                         new com.visitors.network.S2CManagementSyncPacket(nextInsp, nextCont, data.isClosedBySanity()));
             }
