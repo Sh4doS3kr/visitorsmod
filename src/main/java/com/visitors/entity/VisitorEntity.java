@@ -96,6 +96,7 @@ public class VisitorEntity extends PathfinderMob {
     private int trashCooldown = 0;
     private int lowLightTicks = 0;
     private int satisfactionScore = 5; // BUFF: Subida base de 4 a 5 (Máximo inicial)
+    private boolean wasFed = false; // Track if visitor was fed - guarantees minimum 4 stars
 
     private static final int MIN_STAY_TIME = 60 * 20;
     private static final int MAX_STAY_TIME = 300 * 20;
@@ -411,6 +412,7 @@ public class VisitorEntity extends PathfinderMob {
                         player.getItemInHand(hand).shrink(1);
                     // MASSIVE satisfaction boost when fed - guarantees good review
                     satisfactionScore = 5; // Always max satisfaction when fed!
+                    wasFed = true; // This ensures minimum 4 stars on final review
                     setHungry(false);
                     hungerTimer = 0;
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EAT,
@@ -666,6 +668,10 @@ public class VisitorEntity extends PathfinderMob {
             if (this.level() instanceof ServerLevel) {
                 ServerLevel serverLevel = (ServerLevel) this.level();
                 int finalScore = Math.max(0, Math.min(5, satisfactionScore));
+                // If visitor was fed, guarantee minimum 4 stars
+                if (wasFed && finalScore < 4) {
+                    finalScore = 4;
+                }
                 float bonus = VisitorsSavedData.get(serverLevel).getReputationBonus();
                 if (bonus >= 0.1f) {
                     if (finalScore < 5 && this.random.nextFloat() < bonus) {

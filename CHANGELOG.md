@@ -14,7 +14,7 @@ Todos los cambios notables, refactorizaciones de código y optimizaciones de ren
 - **FIX DEFINITIVO DE SENTADO:** Se ha reescrito la lógica de interacción con las sillas. Los NPCs ahora se sientan firmemente y no "saltan" ni se levantan hasta que su tiempo de estancia termina o necesitan comer.
 - **Cola de Pedidos:** Los clientes hambrientos ahora forman una fila ordenada en el mostrador (X=-506, Y=68, Z=551 a 546) en lugar de amontonarse.
 - **Re-Sentado Automático:** Después de comer, los visitantes intentan buscar un asiento libre de nuevo.
-- **Balance de Reseñas:** Clientes MUCHO más generosos. Dar comida ahora **garantiza 5 estrellas**. Estar sentado otorga bonus progresivo.
+- **Balance de Reseñas:** Dar comida ahora **garantiza mínimo 4 estrellas** sin importar otros factores. Estar sentado otorga bonus progresivo.
 - **Restricción de Basura:** Los visitantes ahora solo tiran basura si están en la altura Y=68.
 - **Horarios de Gestión:** El Inspector y el Contratista solo aparecen durante el día (6:00-18:00 hora Minecraft).
 - **Sincronización de Gestión:** Mejorada la precisión de los cronómetros de inspectores y contratistas.
